@@ -96,16 +96,16 @@ const InventoryContext: React.FC = () => {
         <MenuItem onClick={() => handleClick({ action: 'give' })} label={Locale.ui_give || 'Dar'} />
         <MenuItem onClick={() => handleClick({ action: 'drop' })} label={Locale.ui_drop || 'Tirar'} />
         {item && item.metadata?.ammo > 0 && (
-          <MenuItem onClick={() => handleClick({ action: 'removeAmmo' })} label={Locale.ui_remove_ammo} />
+          <MenuItem onClick={() => handleClick({ action: 'removeAmmo' })} label={Locale.ui_remove_ammo || 'Quitar munición'} />
         )}
         {item && item.metadata?.serial && (
           <MenuItem
             onClick={() => handleClick({ action: 'copy', serial: item.metadata?.serial })}
-            label={Locale.ui_copy}
+            label={Locale.ui_copy || 'Copiar serial'}
           />
         )}
         {item && item.metadata?.components && item.metadata?.components.length > 0 && (
-          <Menu label={Locale.ui_removeattachments}>
+          <Menu label={Locale.ui_removeattachments || 'Quitar accesorios'}>
             {item &&
               item.metadata?.components.map((component: string, index: number) => (
                 <MenuItem

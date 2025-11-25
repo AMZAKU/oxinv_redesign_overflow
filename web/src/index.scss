@@ -8,10 +8,10 @@ $secondaryColorLight: rgba(0, 0, 0, 0.5);
 $secondaryColorDark: rgba(12, 12, 12, 0.8);
 
 $gridCols: 5;
-$gridRows: 4;
-$gridSize: 8vh;
+$gridRows: 3.5;
+$gridSize: 99px;
 $gridGap: 5px;
-$containerSize: calc(#{$gridRows} * #{$gridSize + 0.4vh} + #{$gridRows} * #{$gridGap});
+$containerSize: calc(#{$gridRows} * #{$gridSize} + #{$gridRows} * #{$gridGap});
 
 body {
   margin: 0;
@@ -57,45 +57,108 @@ input[type='number']::-webkit-outer-spin-button {
 }
 
 .context-menu-list {
-  min-width: 200px;
-  padding: 4px;
+  min-width: 220px;
+  padding: 8px;
   outline: none;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(135deg, #1a1d23 0%, #22252c 100%);
+  border: 2px solid #6c3bff;
+  border-radius: 12px;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .context-menu-item  {
-  padding: 8px;
-  border-radius: 4px;
-  background: linear-gradient(145deg, white, white);
-  margin-bottom: .4rem;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: transparent;
+  margin-bottom: 4px;
   outline: none;
-  border: none;
-  color: #0A0A0A;
+  border: 1px solid transparent;
+  color: #ffffff;
   font-family: "Resolve";
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: all .1s ease-in-out;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   text-transform: uppercase;
-  &:active {
-    transform: none;
+  font-weight: 500;
+  font-size: 12px;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(108, 59, 255, 0.3), transparent);
+    transition: left 0.6s ease;
   }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+  
   &:hover {
-    background: linear-gradient(145deg, #0B0C0B,#313031);
-    outline: 3px solid white;
-    transform: scale(1.03);
-    color: white;
+    background: linear-gradient(135deg, rgba(108, 59, 255, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+    border: 1px solid rgba(108, 59, 255, 0.6);
+    transform: translateY(-1px);
+    color: #ffffff;
     cursor: pointer;
+    box-shadow: 0 4px 12px rgba(108, 59, 255, 0.3);
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  &:last-child {
+    margin-bottom: 0;
   }
 }
 
 .tooltip-description {
-  padding-top: 0;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 11px;
+  line-height: 1.4;
+  color: #e5e5e5;
 }
 
 .tooltip-markdown > p {
   margin: 0;
+  color: #e5e5e5;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.tooltip-content {
+  padding: 16px;
+  
+  .tooltip-description {
+    padding: 0;
+    background: none;
+    border: none;
+    margin-bottom: 12px;
+  }
+  
+  .flex.flex-wrap.gap-1 > div {
+    background: rgba(108, 59, 255, 0.2) !important;
+    border: 1px solid rgba(108, 59, 255, 0.4) !important;
+    border-radius: 6px !important;
+    padding: 4px 8px !important;
+    
+    .text-red {
+      color: #ffffff !important;
+      font-weight: 500;
+    }
+  }
 }
 
 button:active {
@@ -147,13 +210,13 @@ button:active {
     font-size: 3000px;
     text-align: center;
     border: none;
-    color: #0A0A0A;
+    color: white;
     outline: none;
     
-    background-color: $secondaryColor;
+    background-color: #1a1a1a;
     
     &:focus-within {
-      background: #efeff0b7;
+      background: #2a2a2a;
     }
 
 
@@ -161,8 +224,8 @@ button:active {
 
   .inventory-control-button {
     font-size: 18px;
-    color: #0A0A0A;
-    background-color: #EFEFF0;
+    color: white;
+    background-color: #1a1a1a;
     transition: 200ms;
     border-radius: 5vh;
     border: none;
@@ -172,7 +235,32 @@ button:active {
     font-weight: 500;
 
     &:hover {
-      background: #efeff0b7;
+      background: #2a2a2a;
+    }
+  }
+}
+
+// Header-specific inventory control styling
+.inventory-control-header {
+  .inventory-control {
+    .inventory-control-wrapper {
+      gap: 0;
+    }
+    
+    .inventory-control-input {
+      width: 80px;
+      padding: 8px 12px;
+      font-size: 14px;
+      background-color: #1a1a1a;
+      color: white;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+      text-align: center;
+      
+      &:focus-within {
+        background: #2a2a2a;
+        outline: none;
+      }
     }
   }
 }
@@ -280,11 +368,10 @@ button:active {
 
 .inventory-grid-container {
   display: grid;
-  height: $containerSize;
   grid-template-columns: repeat($gridCols, $gridSize);
-  grid-auto-rows: $gridSize + 0.22vh;
+  grid-auto-rows: $gridSize;
   gap: $gridGap;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 // inventory slots
@@ -387,20 +474,23 @@ button:active {
 .tooltip-wrapper {
   pointer-events: none;
   display: flex;
-  /*background-color: $mainColor;*/
-  width: 200px;
-  padding: 8px;
+  background: linear-gradient(135deg, #1a1d23 0%, #22252c 100%);
+  border: 2px solid #6c3bff;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  width: 250px;
+  padding: 0;
   flex-direction: column;
-  min-width: 200px;
-  color: $textColor;
+  min-width: 250px;
+  max-width: 320px;
+  color: #ffffff;
   font-family: $mainFont;
-  /*border-radius: 4px;
-  border-color: rgba(0, 0, 0, 0.2);
-  border-style: inset;
-  border-width: 1px;*/
+  overflow: hidden;
   p {
     font-size: 12px;
     font-weight: 400;
+    color: #ffffff;
+    margin: 0;
   }
 }
 
@@ -409,9 +499,14 @@ button:active {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  background: linear-gradient(135deg, #6c3bff 0%, #8b5cf6 100%);
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   p {
-    font-size: 15px;
-    font-weight: 400;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -447,7 +542,7 @@ button:active {
 .hotbar-container {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
   width: 100%;
   position: absolute;
@@ -458,12 +553,22 @@ button:active {
   @extend .inventory-slot;
   width: $gridSize;
   height: $gridSize;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
+  }
 }
 
 .hotbar-slot-header-wrapper {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: flex-start;
+  padding-top: 4px;
 }
 
 // item notifications
@@ -504,18 +609,67 @@ button:active {
 }
 
 .durability-bar {
-  background: #de6262;
+  background: linear-gradient(135deg, #1a1d23 0%, #22252c 100%);
+  border: 1px solid rgba(108, 59, 255, 0.6);
   width: 80%;
-  height: 3px;
+  height: 6px;
+  border-radius: 3px;
   overflow: hidden;
+  box-shadow: 
+    inset 0 1px 2px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(108, 59, 255, 0.2);
+}
+
+.weight-bar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
 }
 
 .weight-bar {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px inset rgba(0, 0, 0, 0.1);
-  height: 0.8vh;
-  border-radius: 5%;
+  background: linear-gradient(135deg, #1a1d23 0%, #22252c 100%);
+  border: 1px solid rgba(108, 59, 255, 0.6);
+  height: 8px;
+  width: 100%;
+  border-radius: 4px;
   overflow: hidden;
+  position: relative;
+  box-shadow: 
+    inset 0 1px 2px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(108, 59, 255, 0.2);
+}
+
+.weight-bar-fill {
+  height: 100%;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border-radius: 3px;
+  position: relative;
+  
+  &.normal {
+    background: linear-gradient(90deg, #6c3bff 0%, #8b5cf6 100%);
+  }
+
+  &.warning {
+    background: linear-gradient(90deg, #7c4dff 0%, #9d66ff 100%);
+  }
+
+  &.critical {
+    background: linear-gradient(90deg, #9d66ff 0%, #b794f6 100%);
+  }
+}
+
+.weight-display {
+  font-size: 10px;
+  font-weight: 600;
+  color: #e5e5e5;
+  text-align: center;
+  background: rgba(108, 59, 255, 0.15);
+  border: 1px solid rgba(108, 59, 255, 0.3);
+  border-radius: 4px;
+  padding: 2px 8px;
+  min-width: fit-content;
+  white-space: nowrap;
 }
 
 .transition-fade-enter {

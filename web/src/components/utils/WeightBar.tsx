@@ -1,49 +1,56 @@
 import React, { useMemo } from 'react';
 
-const colorChannelMixer = (colorChannelA: number, colorChannelB: number, amountToMix: number) => {
-  let channelA = colorChannelA * amountToMix;
-  let channelB = colorChannelB * (1 - amountToMix);
-  return channelA + channelB;
-};
+interface WeightBarProps {
+  percent: number;
+  current?: number;
+  max?: number;
+  durability?: boolean;
+}
 
-const colorMixer = (rgbA: number[], rgbB: number[], amountToMix: number) => {
-  let r = colorChannelMixer(rgbA[0], rgbB[0], amountToMix);
-  let g = colorChannelMixer(rgbA[1], rgbB[1], amountToMix);
-  let b = colorChannelMixer(rgbA[2], rgbB[2], amountToMix);
-  return `rgb(${r}, ${g}, ${b})`;
-};
+const WeightBar: React.FC<WeightBarProps> = ({ 
+  percent, 
+  current, 
+  max, 
+  durability 
+}) => {
+  const weightClass = useMemo(() => {
+    if (durability) return '';
+    
+    if (percent <= 60) return 'normal';
+    if (percent <= 85) return 'warning';
+    return 'critical';
+  }, [percent, durability]);
 
-const COLORS = {
-  // Colors used - https://materialui.co/flatuicolors
-  primaryColor: [231, 76, 60], // Red (Pomegranate)
-  secondColor: [0, 255, 0], // Green (Nephritis)
-  accentColor: [211, 84, 0], // Orange (Oragne)
-};
-
-const WeightBar: React.FC<{ percent: number; durability?: boolean }> = ({ percent, durability }) => {
-  const color = useMemo(
-    () =>
-      durability
-        ? percent < 50
-          ? colorMixer(COLORS.accentColor, COLORS.primaryColor, percent / 100)
-          : colorMixer(COLORS.secondColor, COLORS.accentColor, percent / 100)
-        : percent > 50
-        ? colorMixer(COLORS.primaryColor, COLORS.accentColor, percent / 100)
-        : colorMixer(COLORS.accentColor, COLORS.secondColor, percent / 50),
-    [durability, percent]
-  );
+  if (durability) {
+    return (
+      <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-black/40 rounded-b-md overflow-hidden">
+        <div
+          style={{
+            visibility: percent > 0 ? 'visible' : 'hidden',
+            height: '100%',
+            width: `${percent}%`,
+            background: percent < 30
+              ? '#ef4444'
+              : percent < 70
+              ? '#f59e0b'
+              : '#22c55e',
+            transition: 'width 0.3s ease',
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className={`${durability ? 'durability-bar ml-[50%] transform -translate-x-1/2 shadow-lg' : 'weight-bar'} rounded-sm mb-1 `}>
-      <div
-        style={{
-          visibility: percent > 0 ? 'visible' : 'hidden',
-          height: '100%',
-          width: `${percent}%`,
-          backgroundColor: color,
-          transition: `background ${0.3}s ease, width ${0.3}s ease`,
-        }}
-      ></div>
+    <div className="weight-bar-container">
+      <div className="weight-bar">
+        <div
+          className={`weight-bar-fill ${weightClass}`}
+          style={{
+            width: `${Math.min(percent, 100)}%`,
+          }}
+        />
+      </div>
     </div>
   );
 };

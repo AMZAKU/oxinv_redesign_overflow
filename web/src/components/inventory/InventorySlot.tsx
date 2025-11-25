@@ -15,6 +15,7 @@ import { ItemsPayload } from '../../reducers/refreshSlots';
 import { closeTooltip, openTooltip } from '../../store/tooltip';
 import { openContextMenu } from '../../store/contextMenu';
 import { useMergeRefs } from '@floating-ui/react';
+import { motion } from 'framer-motion';
 
 interface SlotProps {
   inventoryId: Inventory['id'];
@@ -23,6 +24,20 @@ interface SlotProps {
   item: Slot;
 }
 
+const getRarityColor = (rarity?: string) => {
+  switch (rarity) {
+    case 'rare':
+      return '#3b82f6'; // blue-500
+    case 'epic':
+      return '#a855f7'; // purple-500
+    case 'legendary':
+      return '#f59e0b'; // amber-500
+    case 'common':
+    default:
+      return '#6b7280'; // gray-500
+  }
+};
+
 const InventorySlot: React.ForwardRefRenderFunction<HTMLDivElement, SlotProps> = (
   { item, inventoryId, inventoryType, inventoryGroups },
   ref
@@ -30,6 +45,8 @@ const InventorySlot: React.ForwardRefRenderFunction<HTMLDivElement, SlotProps> =
   const manager = useDragDropManager();
   const dispatch = useAppDispatch();
   const timerRef = useRef<number | null>(null);
+
+  const rarityColor = getRarityColor( item.metadata?.rarity );
 
   const canDrag = useCallback(() => {
     return canPurchaseItem(item, { type: inventoryType, groups: inventoryGroups }) && canCraftItem(item, inventoryType);
@@ -120,25 +137,66 @@ const InventorySlot: React.ForwardRefRenderFunction<HTMLDivElement, SlotProps> =
   const refs = useMergeRefs([connectRef, ref]);
 
   return (
-    <div
+    <motion.div
       ref={refs}
       onContextMenu={handleContext}
       onClick={handleClick}
-      className={`inventory-slot rounded-sm 
+      className={`inventory-slot rounded-sm custom-scrollbar backdrop-blur-medium transition-smooth
         ${isOver ? "bg-secondary" : "bg-secondary/90"}
+        ${isSlotWithItem(item) ? "will-change-transform" : ""}
         `}
       style={{
         filter:
           !canPurchaseItem(item, { type: inventoryType, groups: inventoryGroups }) || !canCraftItem(item, inventoryType)
             ? 'brightness(80%) grayscale(100%)'
             : undefined,
-        opacity: isDragging ? 0.4 : 1.0,
-        backgroundImage: `url(${item?.name ? getItemUrl(item as SlotWithItem) : 'none'}`,
-        backgroundSize: "80%",
-        transition: ".1s all ease-in-out",
-        transform: isOver ? 'scale(1.04)' : "",
+        borderTop: isSlotWithItem(item) ? `2px solid ${rarityColor}` : undefined,
+      }}
+      initial={{
+        opacity: 0,
+        scale: 0.95
+      }}
+      animate={{
+        opacity: 1,
+        scale: isOver ? 1.02 : 1,
+        boxShadow: isOver
+          ? "0 4px 16px rgba(0, 0, 0, 0.2)"
+          : "0 0 0 rgba(0, 0, 0, 0)"
+      }}
+      transition={{
+        duration: 0.15,
+        ease: "easeOut",
+        delay: item.slot < 30 ? item.slot * 0.003 : 0
       }}
     >
+      {/* Animated Item Image Overlay */}
+      {isSlotWithItem(item) && item?.name && (
+        <motion.div
+          key={`item-image-${item.name}-${item.slot}`}
+          className="absolute inset-0 bg-no-repeat bg-center pointer-events-none"
+          style={{
+            backgroundImage: `url(${getItemUrl(item as SlotWithItem)})`,
+            backgroundSize: "60%",
+          }}
+          initial={{
+            scale: 0.7,
+            opacity: 0
+          }}
+          animate={{
+            scale: 1,
+            opacity: 1
+          }}
+          exit={{
+            scale: 0.7,
+            opacity: 0
+          }}
+          transition={{
+            duration: 0.2,
+            ease: "easeOut"
+          }}
+        />
+      )}
+      
       {isSlotWithItem(item) && (
         <div
           className="item-slot-wrapper"
@@ -211,7 +269,7 @@ const InventorySlot: React.ForwardRefRenderFunction<HTMLDivElement, SlotProps> =
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

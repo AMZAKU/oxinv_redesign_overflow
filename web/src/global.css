@@ -24,7 +24,55 @@
   user-select: none;
 }
 
+:root {
+  /* Colors from of_chat design */
+  --color-main: #17191d;
+  --color-secondary: rgba(42, 45, 53, 0.8);
+  --color-secondary-highlight: #2a2d35;
+  --color-accent: #6c3bff;
+  --color-text: #dedede;
+  --color-border: rgba(255, 255, 255, 0.1);
+
+  /* Additional UI Colors */
+  --color-clothing-active: #a855f7;
+  --color-clothing-active-from: #a855f7;
+  --color-clothing-active-to: #7e22ce;
+  --color-clothing-border-active: #c084fc;
+  --color-clothing-inactive: rgba(0, 0, 0, 0.4);
+  --color-clothing-border-inactive: rgba(255, 255, 255, 0.2);
+
+  /* Fonts */
+  --font-main: 'Resolve', sans-serif;
+  --font-secondary: 'Fpsdemo', sans-serif;
+
+  /* Effects */
+  --blur-medium: blur(8px);
+  --blur-strong: blur(16px);
+  --transition-smooth: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-quick: all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --shadow-glow: 0 4px 20px rgba(108, 59, 255, 0.4);
+  --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --shadow-clothing-active: 0 10px 25px -8px rgba(168, 85, 247, 0.4);
+}
+
 @theme {
-  --color-main: #0a0a0a;
-  --color-secondary: #303132;
+  /* Colors from of_chat design */
+  --color-main: #17191d;
+  --color-secondary: rgba(42, 45, 53, 0.8);
+  --color-secondary-highlight: #2a2d35;
+  --color-accent: #6c3bff;
+  --color-text: #dedede;
+  --color-border: rgba(255, 255, 255, 0.1);
+
+  /* Additional UI Colors */
+  --color-clothing-active: #a855f7;
+  --color-clothing-active-from: #a855f7;
+  --color-clothing-active-to: #7e22ce;
+  --color-clothing-border-active: #c084fc;
+  --color-clothing-inactive: rgba(0, 0, 0, 0.4);
+  --color-clothing-border-inactive: rgba(255, 255, 255, 0.2);
+
+  /* Fonts */
+  --font-main: 'Resolve', sans-serif;
+  --font-secondary: 'Fpsdemo', sans-serif;
 }

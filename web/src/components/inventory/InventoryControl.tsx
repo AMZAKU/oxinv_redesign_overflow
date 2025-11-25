@@ -40,7 +40,6 @@ export default InventoryControl;
 /*const [, use] = useDrop<DragSource, void, any>(() => ({
   accept: 'SLOT',
   drop: (source) => {
-    console.log("here")
     source.inventory === 'player' && onUse(source.item);
   },
 }));

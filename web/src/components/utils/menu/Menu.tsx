@@ -213,13 +213,14 @@ export const MenuComponent = React.forwardRef<HTMLButtonElement, MenuProps & Rea
           <FloatingList elementsRef={elementsRef} labelsRef={labelsRef}>
             {isMounted && (
               <FloatingPortal>
-                <FloatingOverlay lockScroll>
-                  <FloatingFocusManager context={context} modal={true} initialFocus={refs.floating}>
+                <FloatingOverlay lockScroll style={{ background: 'transparent' }}>
+                  <FloatingFocusManager context={context} modal={false} initialFocus={refs.floating}>
                     <div
                       ref={refs.setFloating}
                       className="context-menu-list"
                       style={{ ...floatingStyles, ...styles }}
                       {...getFloatingProps()}
+                      onClick={(e) => e.stopPropagation()}
                     >
                       {children}
                     </div>
@@ -240,9 +241,20 @@ interface MenuItemProps {
 }
 
 const HardcodedIcons: { [key: string]: IconName } = {
-  "usar": "pointer",
-  "dar": "hand-helping",
-  "tirar": "repeat",
+  // Spanish
+  "usar": "hand",
+  "dar": "handshake",
+  "tirar": "package-x",
+  "quitar munición": "circle-off",
+  "copiar serial": "copy",
+  "quitar accesorios": "wrench",
+  // English
+  "use": "hand",
+  "give": "handshake",
+  "drop": "package-x",
+  "remove ammo": "circle-off",
+  "copy serial": "copy",
+  "remove attachments": "wrench",
 }
 
 export const MenuItem = React.forwardRef<
@@ -274,7 +286,7 @@ export const MenuItem = React.forwardRef<
         },
       })}
     >
-      <DynamicIcon name={ HardcodedIcons[label.toLowerCase()] || "backpack" as IconName } ></DynamicIcon>
+      <DynamicIcon name={ HardcodedIcons[label?.toLowerCase() || ""] || "backpack" as IconName } ></DynamicIcon>
       {label}
     </button>
   );

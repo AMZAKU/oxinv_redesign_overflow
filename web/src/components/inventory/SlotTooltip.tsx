@@ -25,6 +25,21 @@ const SlotTooltip: React.ForwardRefRenderFunction<
   const description = item.metadata?.description || itemData?.description;
   const ammoName = itemData?.ammoName && Items[itemData?.ammoName]?.label;
 
+  // Check if there's any content to show in tooltip-content
+  const hasContent = useMemo(() => {
+    if (inventoryType === 'crafting') return true;
+    return !!(
+      description ||
+      ammoName ||
+      item.durability !== undefined ||
+      item.metadata?.ammo !== undefined ||
+      item.metadata?.serial ||
+      (item.metadata?.components && item.metadata?.components[0]) ||
+      item.metadata?.weapontint ||
+      additionalMetadata.some((data: { metadata: string }) => item.metadata && item.metadata[data.metadata])
+    );
+  }, [description, ammoName, item, inventoryType, additionalMetadata]);
+
   return (
     <>
       {!itemData ? (
@@ -37,7 +52,7 @@ const SlotTooltip: React.ForwardRefRenderFunction<
       ) : (
         <div style={{ ...style }} className="tooltip-wrapper" ref={ref}>
           <div 
-            className="tooltip-header-wrapper text-white border-r-2 border-b-2 border-white rounded-sm px-2 border-box bg-main"
+            className="tooltip-header-wrapper"
           >
             <p className='flex-1'>{item.metadata?.label || itemData.label || item.name}</p>
             {inventoryType === 'crafting' ? (
@@ -66,84 +81,84 @@ const SlotTooltip: React.ForwardRefRenderFunction<
             )}
           </div>
 
-          <div className='bg-white px-2 py-[.25rem] bg-black/30 rounded-md mt-2 mt-2 border-b-2 shadow-md border-black/60 text-black/60'>
-            {description ? (
-              <div className="tooltip-description mb-1">
-                <ReactMarkdown className="tooltip-markdown">{description}</ReactMarkdown>
-              </div>
-            ) : 
-              <p className='tooltip-description mb-1'>...</p>
-            }
-            {ammoName && (
-                <p className='flex-1'>
-                  {Locale.ammo_type}: {ammoName}
-                </p>
-            )}
-            {inventoryType !== 'crafting' ? (
-              <div className='flex flex-wrap gap-1'>
-                
-                {item.durability !== undefined && (
-                  <div className='bg-black/60 text-white bg-black/70 w-fit px-[.35rem] rounded-md m-0 p-0 text-[12px] gap-1 flex items-center'>
-                    <DurabilityIcon />
-                    <span className='text-red'>{Math.trunc(item.durability)}</span>
-                  </div>
-                )}
-                {item.metadata?.ammo !== undefined && (
-                  <div className='bg-black/60 text-white bg-black/70 w-fit px-[.35rem] rounded-md m-0 p-0 text-[12px] gap-1 flex items-center'>
-                    <AmmoIcon />
-                    <span className='text-red'>{item.metadata.ammo}</span>
-                  </div>
-                )}
-                {item.metadata?.serial && (
-                  <div className='bg-black/60 text-white bg-black/70 w-fit px-[.35rem] rounded-md m-0 p-0 text-[12px] gap-1 flex items-center'>
-                    <FingerPrintIcon />
-                    <span className='text-red'>{item.metadata.serial}</span>
-                  </div>
-                )}
-                {item.metadata?.components && item.metadata?.components[0] && (
-                  <p>
-                    {Locale.ui_components}:{' '}
-                    {(item.metadata?.components).map((component: string, index: number, array: []) =>
-                      index + 1 === array.length ? Items[component]?.label : Items[component]?.label + ', '
-                    )}
+          {hasContent && (
+            <div className='tooltip-content'>
+              {description && (
+                <div className="tooltip-description mb-1">
+                  <ReactMarkdown className="tooltip-markdown">{description}</ReactMarkdown>
+                </div>
+              )}
+              {ammoName && (
+                  <p className='flex-1'>
+                    {Locale.ammo_type}: {ammoName}
                   </p>
-                )}
-                {item.metadata?.weapontint && (
-                  <p>
-                    {Locale.ui_tint}: {item.metadata.weapontint}
-                  </p>
-                )}
-                {additionalMetadata.map((data: { metadata: string; value: string }, index: number) => (
-                  <Fragment key={`metadata-${index}`}>
-                    {item.metadata && item.metadata[data.metadata] && (
-                      <p>
-                        {data.value}: {item.metadata[data.metadata]}
-                      </p>
-                    )}
-                  </Fragment>
-                ))}
-              </div>
-            ) : (
-              <div className="tooltip-ingredients">
-                {ingredients &&
-                  ingredients.map((ingredient) => {
-                    const [item, count] = [ingredient[0], ingredient[1]];
-                    return (
-                      <div className="tooltip-ingredient" key={`ingredient-${item}`}>
-                        <img src={item ? getItemUrl(item) : 'none'} alt="item-image" />
+              )}
+              {inventoryType !== 'crafting' ? (
+                <div className='flex flex-wrap gap-1'>
+
+                  {item.durability !== undefined && (
+                    <div className='bg-black/60 text-white bg-black/70 w-fit px-[.35rem] rounded-md m-0 p-0 text-[12px] gap-1 flex items-center'>
+                      <DurabilityIcon />
+                      <span className='text-red'>{Math.trunc(item.durability)}</span>
+                    </div>
+                  )}
+                  {item.metadata?.ammo !== undefined && (
+                    <div className='bg-black/60 text-white bg-black/70 w-fit px-[.35rem] rounded-md m-0 p-0 text-[12px] gap-1 flex items-center'>
+                      <AmmoIcon />
+                      <span className='text-red'>{item.metadata.ammo}</span>
+                    </div>
+                  )}
+                  {item.metadata?.serial && (
+                    <div className='bg-black/60 text-white bg-black/70 w-fit px-[.35rem] rounded-md m-0 p-0 text-[12px] gap-1 flex items-center'>
+                      <FingerPrintIcon />
+                      <span className='text-red'>{item.metadata.serial}</span>
+                    </div>
+                  )}
+                  {item.metadata?.components && item.metadata?.components[0] && (
+                    <p>
+                      {Locale.ui_components}:{' '}
+                      {(item.metadata?.components).map((component: string, index: number, array: []) =>
+                        index + 1 === array.length ? Items[component]?.label : Items[component]?.label + ', '
+                      )}
+                    </p>
+                  )}
+                  {item.metadata?.weapontint && (
+                    <p>
+                      {Locale.ui_tint}: {item.metadata.weapontint}
+                    </p>
+                  )}
+                  {additionalMetadata.map((data: { metadata: string; value: string }, index: number) => (
+                    <Fragment key={`metadata-${index}`}>
+                      {item.metadata && item.metadata[data.metadata] && (
                         <p>
-                          {count >= 1
-                            ? `${count}x ${Items[item]?.label || item}`
-                            : count === 0
-                            ? `${Items[item]?.label || item}`
-                            : count < 1 && `${count * 100}% ${Items[item]?.label || item}`}
+                          {data.value}: {item.metadata[data.metadata]}
                         </p>
-                      </div>
-                    );
-                  })}
-              </div>
-            )}
-          </div>
+                      )}
+                    </Fragment>
+                  ))}
+                </div>
+              ) : (
+                <div className="tooltip-ingredients">
+                  {ingredients &&
+                    ingredients.map((ingredient) => {
+                      const [item, count] = [ingredient[0], ingredient[1]];
+                      return (
+                        <div className="tooltip-ingredient" key={`ingredient-${item}`}>
+                          <img src={item ? getItemUrl(item) : 'none'} alt="item-image" />
+                          <p>
+                            {count >= 1
+                              ? `${count}x ${Items[item]?.label || item}`
+                              : count === 0
+                              ? `${Items[item]?.label || item}`
+                              : count < 1 && `${count * 100}% ${Items[item]?.label || item}`}
+                          </p>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </>

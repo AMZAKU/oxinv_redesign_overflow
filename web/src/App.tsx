@@ -19,6 +19,23 @@ interface HandleCloseClickEvent extends React.MouseEvent<HTMLDivElement, MouseEv
 
 debugData([
   {
+    action: 'init',
+    data: {
+      locale: {},
+      items: {},
+      leftInventory: {
+        id: 'player',
+        type: 'player',
+        slots: 50,
+        label: 'Player',
+        weight: 0,
+        maxWeight: 5000,
+        items: [],
+      },
+      imagepath: 'images',
+    },
+  },
+  {
     action: 'setupInventory',
     data: {
       leftInventory: {
@@ -34,31 +51,31 @@ debugData([
             name: 'iron',
             weight: 3000,
             metadata: {
-              description: `name: Svetozar Miletic  \n Gender: Male`,
-              ammo: 3,
-              mustard: '60%',
-              ketchup: '30%',
-              mayo: '10%',
-              imageurl: "https://i.imgur.com/b9lMvL5.png"
+              description: `Common item - Gray border`,
             },
             count: 5,
           },
-          { slot: 2, name: 'powersaw', weight: 0, count: 1, metadata: { durability: 75, imageurl: "https://i.imgur.com/Lfwfj4G.png" } },
-          { slot: 3, name: 'copper', weight: 100, count: 12, metadata: { type: 'Special', imageurl: "https://i.imgur.com/oQo8ByL.png" } },
+          { slot: 2, name: 'copper', weight: 100, count: 12, metadata: { description: 'Rare item - Blue border' } },
           {
-            slot: 4,
-            name: 'water',
-            weight: 100,
+            slot: 3,
+            name: 'powersaw',
+            weight: 0,
             count: 1,
-            metadata: { description: 'Generic item description' },
-          },
-          { slot: 5, name: 'water', weight: 100, count: 1, metadata: { 
-              description: 'Generic item description',
+            metadata: {
               durability: 75,
-              ammo: 20,
-              serial: "1234567890",
+              description: 'Epic item - Purple border',
+              serial: 'PWS-2024-8472',
+              ammo: 24
+            }
+          },
+          { slot: 4, name: 'diamond', weight: 100, count: 1, metadata: { description: 'Legendary item - Gold border' } },
+          { slot: 5, name: 'water', weight: 100, count: 1, metadata: {
+              description: 'Common item - Gray border',
+              durability: 75,
             }
         },
+          { slot: 6, name: 'ruby', weight: 50, count: 2, metadata: { description: 'Legendary item - Gold border' } },
+          { slot: 7, name: 'gold_bar', weight: 200, count: 3, metadata: { description: 'Epic item - Purple border' } },
         ],
       },
       rightInventory: {

@@ -6,13 +6,27 @@ import WeightBar from '../utils/WeightBar';
 import { useAppSelector } from '../../store';
 import { selectLeftInventory } from '../../store/inventory';
 import { SlotWithItem } from '../../typings';
-import SlideUp from '../utils/transitions/SlideUp';
+import { motion, AnimatePresence } from 'framer-motion';
+
+
+const getRarityColor = (rarity?: string) => {
+  switch (rarity) {
+    case 'rare':
+      return '#3b82f6';
+    case 'epic':
+      return '#a855f7';
+    case 'legendary':
+      return '#f59e0b';
+    case 'common':
+    default:
+      return '#6b7280';
+  }
+};
 
 const InventoryHotbar: React.FC = () => {
   const [hotbarVisible, setHotbarVisible] = useState(false);
   const items = useAppSelector(selectLeftInventory).items.slice(0, 5);
 
-  //stupid fix for timeout
   const [handle, setHandle] = useState<NodeJS.Timeout>();
   useNuiEvent('toggleHotbar', () => {
     if (hotbarVisible) {
@@ -25,51 +39,69 @@ const InventoryHotbar: React.FC = () => {
   });
 
   return (
-    <SlideUp in={hotbarVisible}>
-      <div className="hotbar-container">
-        {items.map((item) => (
-          <div
-            className="hotbar-item-slot rounded-md bg-white/20"
-            style={{
-              backgroundImage: `url(${item?.name ? getItemUrl(item as SlotWithItem) : 'none'}`,
-            }}
-            key={`hotbar-${item.slot}`}
-          >
-            {isSlotWithItem(item) && (
-              <div className="item-slot-wrapper">
-                <div className="hotbar-slot-header-wrapper px-2 drop-shadow-md">
-                  <div className="inventory-slot-number">{item.slot}</div>
-                  <div className="item-slot-info-wrapper">
-                    {
-                      /*<p className='text-sm'>
-                        {item.weight > 0
-                            ? item.weight >= 1000
-                                ? `${(item.weight / 1000).toLocaleString('en-us', {
-                                  minimumFractionDigits: 2,
-                                })}kg `
-                                : `${item.weight.toLocaleString('en-us', {
-                                  minimumFractionDigits: 0,
-                                })}g `
-                            : ''}
-                      </p>*/ 
-                    }
-                    <p className="text-white/80">{item.count ? item.count.toLocaleString('en-us') + `x` : ''}</p>
+    <AnimatePresence>
+      {hotbarVisible && (
+        <motion.div
+          className="hotbar-container"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 50 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+        >
+          {items.map((item, index) => {
+            const itemData = isSlotWithItem(item) ? Items[item.name] : null;
+            const rarity = itemData?.rarity || 'common';
+            const rarityColor = getRarityColor(rarity);
+
+            return (
+              <motion.div
+                className="hotbar-item-slot rounded-sm bg-secondary/90 backdrop-blur-[8px]"
+                style={{
+                  borderTop: isSlotWithItem(item) ? `2px solid ${rarityColor}` : undefined,
+                }}
+                key={`hotbar-${item.slot}`}
+                initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{
+                  duration: 0.2,
+                  ease: 'easeOut',
+                  delay: index * 0.05,
+                }}
+              >
+                {isSlotWithItem(item) && item?.name && (
+                  <motion.div
+                    className="absolute inset-0 bg-no-repeat bg-center pointer-events-none"
+                    style={{
+                      backgroundImage: `url(${getItemUrl(item as SlotWithItem)})`,
+                      backgroundSize: '60%',
+                    }}
+                    initial={{ scale: 0.7, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.15, ease: 'easeOut' }}
+                  />
+                )}
+
+                <div className="item-slot-wrapper">
+                  <div className="hotbar-slot-header-wrapper px-2">
+                    <div className="inventory-slot-number">{item.slot}</div>
+                    {isSlotWithItem(item) && (
+                      <div className="item-slot-info-wrapper">
+                        <p>{item.count ? `x${item.count.toLocaleString('en-us')}` : ''}</p>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    {isSlotWithItem(item) && item?.durability !== undefined && (
+                      <WeightBar percent={item.durability} durability />
+                    )}
                   </div>
                 </div>
-                <div>
-                  {/*item?.durability !== undefined && <WeightBar percent={item.durability} durability />*/}
-                  <div className="inventory-slot-label-box rounded-md translate-y-[17px] scale-[1.03] border-r-2 border-b-2 border-white">
-                    <div className="inventory-slot-label-text">
-                      {item.metadata?.label ? item.metadata.label : Items[item.name]?.label || item.name}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </SlideUp>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
